@@ -66,7 +66,6 @@ public class FlowControllerV2 {
     private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
-    @AuthAction(PrivilegeType.READ_RULE)
     public Result<List<FlowRuleEntity>> apiQueryMachineRules(@RequestParam String app) {
 
         if (StringUtil.isEmpty(app)) {
@@ -135,7 +134,6 @@ public class FlowControllerV2 {
     }
 
     @PostMapping("/rule")
-    @AuthAction(value = AuthService.PrivilegeType.WRITE_RULE)
     public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
 
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
@@ -159,8 +157,6 @@ public class FlowControllerV2 {
     }
 
     @PutMapping("/rule/{id}")
-    @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
-
     public Result<FlowRuleEntity> apiUpdateFlowRule(@PathVariable("id") Long id,
                                                     @RequestBody FlowRuleEntity entity) {
         if (id == null || id <= 0) {
@@ -200,7 +196,6 @@ public class FlowControllerV2 {
     }
 
     @DeleteMapping("/rule/{id}")
-    @AuthAction(PrivilegeType.DELETE_RULE)
     public Result<Long> apiDeleteRule(@PathVariable("id") Long id) {
         if (id == null || id <= 0) {
             return Result.ofFail(-1, "Invalid id");
