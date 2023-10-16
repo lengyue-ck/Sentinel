@@ -18,9 +18,6 @@ package com.alibaba.csp.sentinel.dashboard.controller.v2;
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
-import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
-import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
 import com.alibaba.csp.sentinel.util.StringUtil;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
@@ -43,12 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Flow rule controller (v2).
- *
- * @author Eric Zhao
- * @since 1.4.0
- */
 @RestController
 @RequestMapping(value = "/v2/flow")
 public class FlowControllerV2 {
@@ -133,7 +124,7 @@ public class FlowControllerV2 {
         return null;
     }
 
-    @PostMapping("/rule")
+    @PostMapping("/rules")
     public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
 
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
@@ -171,7 +162,6 @@ public class FlowControllerV2 {
         }
 
         entity.setApp(oldEntity.getApp());
-        entity.setIp(oldEntity.getIp());
         entity.setPort(oldEntity.getPort());
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {
