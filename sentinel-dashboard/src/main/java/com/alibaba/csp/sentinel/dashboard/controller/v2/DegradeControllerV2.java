@@ -33,7 +33,7 @@ public class DegradeControllerV2 {
     @Qualifier("degradeRuleNacosPublisher")
     private DynamicRulePublisher<List<DegradeRuleEntity>> rulePublisher;
 
-    @GetMapping("/rules")
+    @GetMapping("/rule")
     public Result<List<DegradeRuleEntity>> apiQueryMachineRules(String app) {
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");
@@ -48,7 +48,7 @@ public class DegradeControllerV2 {
         }
     }
 
-    @PostMapping("/rules")
+    @PostMapping("/rule")
     public Result<DegradeRuleEntity> apiAddRule(@RequestBody DegradeRuleEntity entity) {
         Result<DegradeRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {

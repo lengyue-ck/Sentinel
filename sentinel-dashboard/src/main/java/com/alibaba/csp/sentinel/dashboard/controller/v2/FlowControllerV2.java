@@ -56,7 +56,7 @@ public class FlowControllerV2 {
     @Qualifier("flowRuleNacosPublisher")
     private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
 
-    @GetMapping("/rules")
+    @GetMapping("/rule")
     public Result<List<FlowRuleEntity>> apiQueryMachineRules(@RequestParam String app) {
 
         if (StringUtil.isEmpty(app)) {
@@ -124,7 +124,7 @@ public class FlowControllerV2 {
         return null;
     }
 
-    @PostMapping("/rules")
+    @PostMapping("/rule")
     public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
 
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
