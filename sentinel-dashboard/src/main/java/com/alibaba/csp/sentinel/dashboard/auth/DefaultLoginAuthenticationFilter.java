@@ -110,7 +110,7 @@ public class DefaultLoginAuthenticationFilter implements LoginAuthenticationFilt
         AuthService.AuthUser authUser = authService.getAuthUser(httpRequest);
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        if (authUser != authUser) {
+        if (authUser == null) {
             // If auth fail, set response status code to 401
             httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         } else {
