@@ -44,6 +44,6 @@ public class NacosConfig {
 
     @Bean
     public ConfigService nacosConfigService() throws Exception {
-        return ConfigFactory.createConfigService("localhost");
+        return ConfigFactory.createConfigService("nacos.spring-cloud-system.svc.cluster.local:8848");
     }
 }
