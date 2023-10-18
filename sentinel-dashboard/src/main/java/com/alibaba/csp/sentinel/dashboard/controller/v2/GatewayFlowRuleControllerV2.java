@@ -44,7 +44,7 @@ public class GatewayFlowRuleControllerV2 {
     private DynamicRulePublisher<List<GatewayFlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
-    public Result<List<GatewayFlowRuleEntity>> queryFlowRules(@PathVariable String app) {
+    public Result<List<GatewayFlowRuleEntity>> queryFlowRules(String app) {
 
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");
