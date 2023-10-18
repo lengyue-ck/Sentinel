@@ -29,7 +29,7 @@ import static com.alibaba.csp.sentinel.slots.block.RuleConstant.*;
 import static com.alibaba.csp.sentinel.slots.block.RuleConstant.CONTROL_BEHAVIOR_RATE_LIMITER;
 
 @RestController
-@RequestMapping(value = "/sentinel-service/gateway/flow")
+@RequestMapping(value = "/sentinel-service/gw-flow")
 public class GatewayFlowRuleControllerV2 {
     private final Logger logger = LoggerFactory.getLogger(FlowControllerV2.class);
 
@@ -44,15 +44,11 @@ public class GatewayFlowRuleControllerV2 {
     private DynamicRulePublisher<List<GatewayFlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
-    public Result<List<GatewayFlowRuleEntity>> queryFlowRules(String app, String ip, Integer port) {
+    public Result<List<GatewayFlowRuleEntity>> queryFlowRules(@PathVariable String app) {
 
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");
         }
-        if (port == null) {
-            return Result.ofFail(-1, "port can't be null");
-        }
-
         try {
             List<GatewayFlowRuleEntity> rules = ruleProvider.getRules(app);
             repository.saveAll(rules);
@@ -64,7 +60,7 @@ public class GatewayFlowRuleControllerV2 {
     }
 
 
-    @PostMapping("rule")
+    @PostMapping("/create")
     public Result<GatewayFlowRuleEntity> addFlowRule(@RequestBody AddFlowRuleReqVo reqVo) {
 
         String app = reqVo.getApp();
@@ -228,8 +224,7 @@ public class GatewayFlowRuleControllerV2 {
     }
 
 
-    @PostMapping("/save.json")
-    @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
+    @PutMapping("/save")
     public Result<GatewayFlowRuleEntity> updateFlowRule(@RequestBody UpdateFlowRuleReqVo reqVo) {
 
         String app = reqVo.getApp();
@@ -376,8 +371,8 @@ public class GatewayFlowRuleControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @DeleteMapping("/rule/{id}")
-    public Result<Long> deleteFlowRule(@PathVariable("id") Long id) {
+    @DeleteMapping("/delete")
+    public Result<Long> deleteFlowRule(Long id) {
 
         if (id == null) {
             return Result.ofFail(-1, "id can't be null");
