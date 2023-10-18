@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v2/degrade")
+@RequestMapping(value = "/sentinel-service/degrade")
 public class DegradeControllerV2 {
     private final Logger logger = LoggerFactory.getLogger(DegradeControllerV2.class);
 
@@ -33,7 +33,7 @@ public class DegradeControllerV2 {
     @Qualifier("degradeRuleNacosPublisher")
     private DynamicRulePublisher<List<DegradeRuleEntity>> rulePublisher;
 
-    @GetMapping("/rule")
+    @GetMapping("/rules")
     public Result<List<DegradeRuleEntity>> apiQueryMachineRules(String app) {
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");

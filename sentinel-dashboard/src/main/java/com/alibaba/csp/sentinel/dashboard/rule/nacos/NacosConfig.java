@@ -15,6 +15,7 @@
  */
 package com.alibaba.csp.sentinel.dashboard.rule.nacos;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.datasource.Converter;
@@ -48,6 +49,15 @@ public class NacosConfig {
         return s -> JSON.parseArray(s, DegradeRuleEntity.class);
     }
 
+    @Bean
+    public Converter<List<GatewayFlowRuleEntity>, String> flowGatewayRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean
+    public Converter<String, List<GatewayFlowRuleEntity>> flowGatewayeRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, GatewayFlowRuleEntity.class);
+    }
     @Bean
     public ConfigService nacosConfigService() throws Exception {
         return ConfigFactory.createConfigService("nacos.spring-cloud-system.svc.cluster.local:8848");
