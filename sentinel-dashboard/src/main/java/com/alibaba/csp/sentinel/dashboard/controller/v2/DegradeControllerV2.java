@@ -106,7 +106,7 @@ public class DegradeControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @DeleteMapping("/rule")
+    @DeleteMapping("/delete")
     public Result<Long> delete(@RequestParam Long id) {
         if (id == null) {
             return Result.ofFail(-1, "id can't be null");
