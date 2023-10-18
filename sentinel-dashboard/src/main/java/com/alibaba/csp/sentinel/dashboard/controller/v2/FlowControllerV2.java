@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,9 +55,8 @@ public class FlowControllerV2 {
     @Qualifier("flowRuleNacosPublisher")
     private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
 
-    @GetMapping("/rule")
+    @GetMapping("/rules")
     public Result<List<FlowRuleEntity>> apiQueryMachineRules(@RequestParam String app) {
-
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");
         }
@@ -78,6 +76,87 @@ public class FlowControllerV2 {
             logger.error("Error when querying flow rules", throwable);
             return Result.ofThrowable(-1, throwable);
         }
+    }
+
+
+    @PostMapping("/create")
+    public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
+
+        Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
+        if (checkResult != null) {
+            return checkResult;
+        }
+        entity.setId(null);
+        Date date = new Date();
+        entity.setGmtCreate(date);
+        entity.setGmtModified(date);
+        entity.setLimitApp(entity.getLimitApp().trim());
+        entity.setResource(entity.getResource().trim());
+        try {
+            entity = repository.save(entity);
+            publishRules(entity.getApp());
+        } catch (Throwable throwable) {
+            logger.error("Failed to add flow rule", throwable);
+            return Result.ofThrowable(-1, throwable);
+        }
+        return Result.ofSuccess(entity);
+    }
+
+    @PutMapping("/save")
+    public Result<FlowRuleEntity> apiUpdateFlowRule(@RequestBody FlowRuleEntity entity) {
+        if (entity == null || entity.getId() == null) {
+            return Result.ofFail(-1, "invalid body");
+        }
+        FlowRuleEntity oldEntity = repository.findById(entity.getId());
+        if (oldEntity == null) {
+            return Result.ofFail(-1, "id " + entity.getId() + " does not exist");
+        }
+
+        entity.setApp(oldEntity.getApp());
+        entity.setPort(oldEntity.getPort());
+        Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
+        if (checkResult != null) {
+            return checkResult;
+        }
+
+        Date date = new Date();
+        entity.setGmtCreate(oldEntity.getGmtCreate());
+        entity.setGmtModified(date);
+        try {
+            entity = repository.save(entity);
+            if (entity == null) {
+                return Result.ofFail(-1, "save entity fail");
+            }
+            publishRules(oldEntity.getApp());
+        } catch (Throwable throwable) {
+            logger.error("Failed to update flow rule", throwable);
+            return Result.ofThrowable(-1, throwable);
+        }
+        return Result.ofSuccess(entity);
+    }
+
+    @DeleteMapping("/delete")
+    public Result<Long> apiDeleteRule(Long id) {
+        if (id == null || id <= 0) {
+            return Result.ofFail(-1, "Invalid id");
+        }
+        FlowRuleEntity oldEntity = repository.findById(id);
+        if (oldEntity == null) {
+            return Result.ofSuccess(null);
+        }
+
+        try {
+            repository.delete(id);
+            publishRules(oldEntity.getApp());
+        } catch (Exception e) {
+            return Result.ofFail(-1, e.getMessage());
+        }
+        return Result.ofSuccess(id);
+    }
+
+    private void publishRules(String app) throws Exception {
+        List<FlowRuleEntity> rules = repository.findAllByApp(app);
+        rulePublisher.publish(app, rules);
     }
 
     private <R> Result<R> checkEntityInternal(FlowRuleEntity entity) {
@@ -122,90 +201,5 @@ public class FlowControllerV2 {
             return Result.ofFail(-1, "cluster config should be valid");
         }
         return null;
-    }
-
-    @PostMapping("/rule")
-    public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
-
-        Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
-        if (checkResult != null) {
-            return checkResult;
-        }
-        entity.setId(null);
-        Date date = new Date();
-        entity.setGmtCreate(date);
-        entity.setGmtModified(date);
-        entity.setLimitApp(entity.getLimitApp().trim());
-        entity.setResource(entity.getResource().trim());
-        try {
-            entity = repository.save(entity);
-            publishRules(entity.getApp());
-        } catch (Throwable throwable) {
-            logger.error("Failed to add flow rule", throwable);
-            return Result.ofThrowable(-1, throwable);
-        }
-        return Result.ofSuccess(entity);
-    }
-
-    @PutMapping("/rule/{id}")
-    public Result<FlowRuleEntity> apiUpdateFlowRule(@PathVariable("id") Long id,
-                                                    @RequestBody FlowRuleEntity entity) {
-        if (id == null || id <= 0) {
-            return Result.ofFail(-1, "Invalid id");
-        }
-        FlowRuleEntity oldEntity = repository.findById(id);
-        if (oldEntity == null) {
-            return Result.ofFail(-1, "id " + id + " does not exist");
-        }
-        if (entity == null) {
-            return Result.ofFail(-1, "invalid body");
-        }
-
-        entity.setApp(oldEntity.getApp());
-        entity.setPort(oldEntity.getPort());
-        Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
-        if (checkResult != null) {
-            return checkResult;
-        }
-
-        entity.setId(id);
-        Date date = new Date();
-        entity.setGmtCreate(oldEntity.getGmtCreate());
-        entity.setGmtModified(date);
-        try {
-            entity = repository.save(entity);
-            if (entity == null) {
-                return Result.ofFail(-1, "save entity fail");
-            }
-            publishRules(oldEntity.getApp());
-        } catch (Throwable throwable) {
-            logger.error("Failed to update flow rule", throwable);
-            return Result.ofThrowable(-1, throwable);
-        }
-        return Result.ofSuccess(entity);
-    }
-
-    @DeleteMapping("/rule/{id}")
-    public Result<Long> apiDeleteRule(@PathVariable("id") Long id) {
-        if (id == null || id <= 0) {
-            return Result.ofFail(-1, "Invalid id");
-        }
-        FlowRuleEntity oldEntity = repository.findById(id);
-        if (oldEntity == null) {
-            return Result.ofSuccess(null);
-        }
-
-        try {
-            repository.delete(id);
-            publishRules(oldEntity.getApp());
-        } catch (Exception e) {
-            return Result.ofFail(-1, e.getMessage());
-        }
-        return Result.ofSuccess(id);
-    }
-
-    private void publishRules(/*@NonNull*/ String app) throws Exception {
-        List<FlowRuleEntity> rules = repository.findAllByApp(app);
-        rulePublisher.publish(app, rules);
     }
 }

@@ -48,7 +48,7 @@ public class DegradeControllerV2 {
         }
     }
 
-    @PostMapping("/rule")
+    @PostMapping("/create")
     public Result<DegradeRuleEntity> apiAddRule(@RequestBody DegradeRuleEntity entity) {
         Result<DegradeRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {
@@ -73,15 +73,14 @@ public class DegradeControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @PutMapping("/rule/{id}")
-    public Result<DegradeRuleEntity> apiUpdateRule(@PathVariable("id") Long id,
-                                                   @RequestBody DegradeRuleEntity entity) {
-        if (id == null || id <= 0) {
-            return Result.ofFail(-1, "id can't be null or negative");
+    @PutMapping("/save")
+    public Result<DegradeRuleEntity> apiUpdateRule(@RequestBody DegradeRuleEntity entity) {
+        if (entity == null || entity.getId() == null) {
+            return Result.ofFail(-1, "id can't be null");
         }
-        DegradeRuleEntity oldEntity = repository.findById(id);
+        DegradeRuleEntity oldEntity = repository.findById(entity.getId());
         if (oldEntity == null) {
-            return Result.ofFail(-1, "Degrade rule does not exist, id=" + id);
+            return Result.ofFail(-1, "Degrade rule does not exist, id=" + entity.getIp());
         }
         entity.setApp(oldEntity.getApp());
         entity.setPort(oldEntity.getPort());
@@ -96,7 +95,7 @@ public class DegradeControllerV2 {
         try {
             entity = repository.save(entity);
         } catch (Throwable t) {
-            logger.error("Failed to save degrade rule, id={}, rule={}", id, entity, t);
+            logger.error("Failed to save degrade rule, id={}, rule={}", entity.getId(), entity, t);
             return Result.ofThrowable(-1, t);
         }
         try {
@@ -107,8 +106,8 @@ public class DegradeControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @DeleteMapping("/rule/{id}")
-    public Result<Long> delete(@PathVariable("id") Long id) {
+    @DeleteMapping("/rule")
+    public Result<Long> delete(@RequestParam Long id) {
         if (id == null) {
             return Result.ofFail(-1, "id can't be null");
         }
