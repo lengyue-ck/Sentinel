@@ -26,10 +26,8 @@ public class IdSettingAspect {
 
     private Long getAndIncrementId() throws Exception {
         String oldId = configService.getConfig("id", NacosConfigUtil.GROUP_ID, 3000);
-
-        System.out.println("oldId: " + oldId);
         AtomicLong ids = new AtomicLong(converter.convert(oldId));
-        long newId = ids.incrementAndGet();
+        Long newId = ids.incrementAndGet();
         configService.publishConfig("id", NacosConfigUtil.GROUP_ID, converter2.convert(newId));
         return newId;
     }
