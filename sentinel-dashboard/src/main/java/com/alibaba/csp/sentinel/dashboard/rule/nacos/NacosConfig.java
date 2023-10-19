@@ -39,6 +39,7 @@ public class NacosConfig {
     public Converter<String, List<FlowRuleEntity>> flowRuleEntityDecoder() {
         return s -> JSON.parseArray(s, FlowRuleEntity.class);
     }
+
     @Bean
     public Converter<List<DegradeRuleEntity>, String> degradeRuleEntityEncoder() {
         return JSON::toJSONString;
@@ -50,6 +51,22 @@ public class NacosConfig {
     }
 
     @Bean
+    public Converter<Long, String> idEncoder() {
+        return String::valueOf;
+    }
+
+    @Bean
+    public Converter<String, Long> idDecoder() {
+        return s -> {
+            try {
+                return Long.parseLong(s);
+            } catch (NumberFormatException e) {
+                return 0L;
+            }
+        };
+    }
+
+    @Bean
     public Converter<List<GatewayFlowRuleEntity>, String> flowGatewayRuleEntityEncoder() {
         return JSON::toJSONString;
     }
@@ -58,6 +75,7 @@ public class NacosConfig {
     public Converter<String, List<GatewayFlowRuleEntity>> flowGatewayeRuleEntityDecoder() {
         return s -> JSON.parseArray(s, GatewayFlowRuleEntity.class);
     }
+
     @Bean
     public ConfigService nacosConfigService() throws Exception {
         return ConfigFactory.createConfigService("nacos.spring-cloud-system.svc.cluster.local:8848");

@@ -1,7 +1,9 @@
 package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.NacosConfigUtil;
+import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,6 +11,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Aspect
@@ -16,13 +19,17 @@ import java.util.concurrent.atomic.AtomicLong;
 public class IdSettingAspect {
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private Converter<String, Long> converter;
+    @Autowired
+    private Converter<Long, String> converter2;
 
     private Long getAndIncrementId() throws Exception {
-        String id = configService.getConfig("id", NacosConfigUtil.GROUP_ID, 3000);
-        System.out.println("id: " + id);
-        AtomicLong ids = new AtomicLong(Long.parseLong(id));
+        String oldId = configService.getConfig("id", NacosConfigUtil.GROUP_ID, 3000);
+
+        AtomicLong ids = new AtomicLong(converter.convert(oldId));
         long newId = ids.incrementAndGet();
-        configService.publishConfig("id", NacosConfigUtil.GROUP_ID, String.valueOf(newId));
+        configService.publishConfig("id", NacosConfigUtil.GROUP_ID, converter2.convert(newId));
         return newId;
     }
 
