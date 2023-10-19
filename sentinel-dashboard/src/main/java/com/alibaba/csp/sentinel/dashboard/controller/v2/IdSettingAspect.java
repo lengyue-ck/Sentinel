@@ -26,9 +26,8 @@ public class IdSettingAspect {
     private Converter<Long, String> converter2;
 
     private Long getAndIncrementId() throws Exception {
-        String oldId = configService.getConfig(NacosConfigUtil.INCR_ID, NacosConfigUtil.GROUP_ID, 3000);
-        AtomicLong ids = new AtomicLong(converter.convert(oldId));
-        Long newId = ids.incrementAndGet();
+        String oldId = configService.getConfig(NacosConfigUtil.INCR_ID, NacosConfigUtil.GROUP_ID, NacosConfigUtil.TIMEOUT);
+        Long newId = converter.convert(oldId) + 1L;
         configService.publishConfig(NacosConfigUtil.INCR_ID, NacosConfigUtil.GROUP_ID, converter2.convert(newId));
         return newId;
     }
@@ -37,7 +36,6 @@ public class IdSettingAspect {
     //全局共用一个自增id，就不需要对每个规则类型都设置一个自增id了
     @Before("execution(* com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter.save(..)) && args(entity)")
     public void setIdIfNull(RuleEntity entity) {
-
         if (entity.getId() == null) {
             try {
                 entity.setId(getAndIncrementId());
@@ -45,5 +43,4 @@ public class IdSettingAspect {
             }
         }
     }
-
 }

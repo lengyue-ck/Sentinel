@@ -20,6 +20,7 @@ package com.alibaba.csp.sentinel.dashboard.rule.nacos;
  * @since 1.4.0
  */
 public final class NacosConfigUtil {
+    public static final Long TIMEOUT = 3000L;
     public static final String INCR_ID = "id";
 
     public static final String GROUP_ID = "SENTINEL_GROUP";
