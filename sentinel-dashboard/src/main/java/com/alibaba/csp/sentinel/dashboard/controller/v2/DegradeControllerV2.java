@@ -136,9 +136,7 @@ public class DegradeControllerV2 {
             return Result.ofFail(-1, "app can't be blank");
         }
 
-        if (entity.getPort() == null || entity.getPort() <= 0) {
-            return Result.ofFail(-1, "invalid port: " + entity.getPort());
-        }
+
         if (StringUtil.isBlank(entity.getLimitApp())) {
             return Result.ofFail(-1, "limitApp can't be null or empty");
         }
