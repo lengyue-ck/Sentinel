@@ -72,12 +72,6 @@ public class GatewayFlowRuleControllerV2 {
         entity.setApp(app.trim());
 
 
-        Integer port = reqVo.getPort();
-        if (port == null) {
-            return Result.ofFail(-1, "port can't be null");
-        }
-        entity.setPort(port);
-
         // API类型, Route ID或API分组
         Integer resourceMode = reqVo.getResourceMode();
         if (resourceMode == null) {
