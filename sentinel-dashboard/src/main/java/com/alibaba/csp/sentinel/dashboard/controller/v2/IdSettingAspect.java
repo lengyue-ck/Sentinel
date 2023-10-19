@@ -2,6 +2,7 @@ package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.NacosConfig;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.NacosConfigUtil;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.nacos.api.config.ConfigService;
@@ -25,10 +26,10 @@ public class IdSettingAspect {
     private Converter<Long, String> converter2;
 
     private Long getAndIncrementId() throws Exception {
-        String oldId = configService.getConfig("id", NacosConfigUtil.GROUP_ID, 3000);
+        String oldId = configService.getConfig(NacosConfigUtil.INCR_ID, NacosConfigUtil.GROUP_ID, 3000);
         AtomicLong ids = new AtomicLong(converter.convert(oldId));
         Long newId = ids.incrementAndGet();
-        configService.publishConfig("id", NacosConfigUtil.GROUP_ID, converter2.convert(newId));
+        configService.publishConfig(NacosConfigUtil.INCR_ID, NacosConfigUtil.GROUP_ID, converter2.convert(newId));
         return newId;
     }
 
@@ -41,7 +42,6 @@ public class IdSettingAspect {
             try {
                 entity.setId(getAndIncrementId());
             } catch (Exception ignored) {
-                ignored.printStackTrace();
             }
         }
     }
