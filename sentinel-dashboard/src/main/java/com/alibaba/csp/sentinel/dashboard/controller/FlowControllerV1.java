@@ -72,6 +72,7 @@ public class FlowControllerV1 {
         if (StringUtil.isEmpty(app)) {
             return Result.ofFail(-1, "app can't be null or empty");
         }
+
         if (StringUtil.isEmpty(ip)) {
             return Result.ofFail(-1, "ip can't be null or empty");
         }
