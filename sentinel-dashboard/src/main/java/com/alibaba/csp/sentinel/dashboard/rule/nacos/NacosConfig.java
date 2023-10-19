@@ -66,14 +66,19 @@ public class NacosConfig {
         };
     }
 
+    // com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule 字段为 intervalSec
+    // com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity 字段为 interval
+    // 序列化的JSON数据持久化到nacos中，时间间隔为 interval
+    // 而客户端从nacos获取的数据中，时间间隔为 intervalSec
+    // 为了兼容，这里做了转换
     @Bean
     public Converter<List<GatewayFlowRuleEntity>, String> flowGatewayRuleEntityEncoder() {
-        return JSON::toJSONString;
+        return s -> JSON.toJSONString(s).replaceAll("interval", "intervalSec");
     }
 
     @Bean
     public Converter<String, List<GatewayFlowRuleEntity>> flowGatewayeRuleEntityDecoder() {
-        return s -> JSON.parseArray(s, GatewayFlowRuleEntity.class);
+        return s -> JSON.parseArray(s.replaceAll("intervalSec", "interval"), GatewayFlowRuleEntity.class);
     }
 
     @Bean
