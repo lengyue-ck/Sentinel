@@ -19,6 +19,7 @@ public class IdSettingAspect {
 
     private Long getAndIncrementId() throws Exception {
         String id = configService.getConfig("id", NacosConfigUtil.GROUP_ID, 3000);
+        System.out.println("id: " + id);
         AtomicLong ids = new AtomicLong(Long.parseLong(id));
         long newId = ids.incrementAndGet();
         configService.publishConfig("id", NacosConfigUtil.GROUP_ID, String.valueOf(newId));
@@ -34,6 +35,7 @@ public class IdSettingAspect {
             try {
                 entity.setId(getAndIncrementId());
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         }
     }
