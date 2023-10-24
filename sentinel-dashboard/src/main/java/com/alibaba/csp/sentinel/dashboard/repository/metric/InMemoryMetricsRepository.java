@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryMetricsRepository implements MetricsRepository<MetricEntity> {
 
-    private static final long MAX_METRIC_LIVE_TIME_MS = 1000 * 60 * 5;
+    private static final long MAX_METRIC_LIVE_TIME_MS = 1000 * 60 * 60 * 24;
 
     /**
      * {@code app -> resource -> timestamp -> metric}
