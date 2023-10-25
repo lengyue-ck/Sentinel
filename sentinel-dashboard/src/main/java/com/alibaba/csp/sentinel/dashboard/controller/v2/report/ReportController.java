@@ -33,7 +33,7 @@ public class ReportController {
     }
     @Scheduled(fixedRate = 5000) // 每隔5秒执行一次
     public void test() {
-        long endTime = System.currentTimeMillis() - 1000 * 10;//收集信息有延迟
+        long endTime = System.currentTimeMillis() - 1000 * 60;//收集信息有延迟
         long startTime = endTime - 1000 * 10;
         String app = "graee68d";
         String resource = "/pc-service/api/hello";
