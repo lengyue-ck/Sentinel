@@ -4,8 +4,8 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.report.ReportEntity;
 import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.mail.SimpleMailMessage;
-//import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +16,8 @@ import java.util.List;
 public class ReportRuleInvoke {
     @Autowired
     private MetricsRepository<MetricEntity> metricStore;
-//    @Autowired
-//    private JavaMailSenderImpl javaMailSender;
+    @Autowired
+    private JavaMailSenderImpl javaMailSender;
 
     //支持模版配置
 
@@ -94,12 +94,12 @@ public class ReportRuleInvoke {
         }
 
 
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setSubject("告警通知");
-//        message.setText(template);
-//        message.setTo("1666888816@qq.com");
-//        message.setFrom(javaMailSender.getUsername());
-//        javaMailSender.send(message);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setSubject("告警通知");
+        message.setText(template);
+        message.setTo("1666888816@qq.com");
+        message.setFrom(javaMailSender.getUsername());
+        javaMailSender.send(message);
 
 
         System.out.println(template);
@@ -109,14 +109,14 @@ public class ReportRuleInvoke {
     public void asyncInvoke(ReportEntity entity) {
         long endTime = System.currentTimeMillis() - 1000 * 30;//收集信息有延迟
 
-        long startTime = endTime - entity.getInterval() * 1000L;
+        long startTime = endTime - Math.max(entity.getInterval(), 1) * 1000L;
 
         List<MetricEntity> entities = metricStore.queryByAppAndResourceBetween(entity.getApp(), entity.getResource(), startTime, endTime);
 
         if (entity.getMethod() == ReportEntity.TOTAL_QPS) {
             long sumPassQps = entities.stream().mapToLong(MetricEntity::getPassQps).sum();
             long sumBlockQps = entities.stream().mapToLong(MetricEntity::getBlockQps).sum();
-            System.out.println("总共的QPS"+(sumBlockQps+sumPassQps));
+            System.out.println("总共的QPS" + (sumBlockQps + sumPassQps));
             if (sumPassQps + sumBlockQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
                 report(entities, entity);
             } else if (sumPassQps + sumBlockQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
