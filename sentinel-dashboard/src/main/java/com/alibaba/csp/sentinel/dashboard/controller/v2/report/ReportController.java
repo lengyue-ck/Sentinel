@@ -28,7 +28,7 @@ public class ReportController {
     @Autowired
     private IncrNacosRule incrNacosRule;
 
-    @Scheduled(fixedRate = 5000) // 每隔5秒执行一次
+    @Scheduled(fixedRate = 10000) // 每隔5秒执行一次
     public void test() throws Exception {
         List<ReportEntity> rules = provider.getRules();
         for (ReportEntity rule : rules) {

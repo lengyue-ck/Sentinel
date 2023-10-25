@@ -27,6 +27,8 @@ public class ReportEntity {
 
     private Long count;//总数
 
+    private int interval;//间隔时间
+
 
 
     private String template;//模版
@@ -85,6 +87,14 @@ public class ReportEntity {
 
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 
     public ReportEntity() {
