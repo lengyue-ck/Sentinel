@@ -116,6 +116,7 @@ public class ReportRuleInvoke {
         if (entity.getMethod() == ReportEntity.TOTAL_QPS) {
             long sumPassQps = entities.stream().mapToLong(MetricEntity::getPassQps).sum();
             long sumBlockQps = entities.stream().mapToLong(MetricEntity::getBlockQps).sum();
+            System.out.println("总共的QPS"+(sumBlockQps+sumPassQps));
             if (sumPassQps + sumBlockQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
                 report(entities, entity);
             } else if (sumPassQps + sumBlockQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {

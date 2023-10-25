@@ -29,6 +29,8 @@ public class ReportEntity {
 
     private int interval;//间隔时间
 
+    private String email;//邮箱
+
 
 
     private String template;//模版
@@ -98,5 +100,13 @@ public class ReportEntity {
     }
 
     public ReportEntity() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
