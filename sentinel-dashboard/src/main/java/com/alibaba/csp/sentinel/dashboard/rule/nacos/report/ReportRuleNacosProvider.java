@@ -20,8 +20,8 @@ public class ReportRuleNacosProvider {
     @Autowired
     private Converter<String,List<ReportEntity>> converter;
 
-    public List<ReportEntity> getRules(String appName) throws Exception {
-        String rules = configService.getConfig(appName + NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
+    public List<ReportEntity> getRules() throws Exception {
+        String rules = configService.getConfig(NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
                 NacosConfigUtil.GROUP_ID, NacosConfigUtil.TIMEOUT);
         if (StringUtil.isEmpty(rules)) {
             return new ArrayList<>();

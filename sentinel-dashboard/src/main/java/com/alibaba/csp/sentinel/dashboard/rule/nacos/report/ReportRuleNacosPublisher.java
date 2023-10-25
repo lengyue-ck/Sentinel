@@ -19,12 +19,9 @@ public class ReportRuleNacosPublisher {
     private Converter<List<ReportEntity>, String> converter;
 
 
-    public void publish(String app, List<ReportEntity> rules) throws Exception {
-        AssertUtil.notEmpty(app, "app name cannot be empty");
-        if (rules == null) {
-            return;
-        }
-        configService.publishConfig(app + NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
+    public void publish(List<ReportEntity> rules) throws Exception {
+
+        configService.publishConfig(NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
                 NacosConfigUtil.GROUP_ID, converter.convert(rules));
     }
 }

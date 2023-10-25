@@ -1,6 +1,18 @@
 package com.alibaba.csp.sentinel.dashboard.datasource.entity.report;
 
 public class ReportEntity {
+    public static final int GT = 1;
+    public static final int LT = -1;
+    public static final int TOTAL_QPS = 0;
+    public static final int RT = 1;
+
+    public static final int SUCCESS_QPS = 2;
+
+    public static final int EXCEPTION_QPS = 3;
+
+    public static final int BLOCK_QPS = 4;
+
+
     private Long id;
 
     private String app;//组件名
