@@ -1,7 +1,7 @@
 package com.alibaba.csp.sentinel.dashboard.datasource.entity.report;
 
 public class ReportEntity {
-    private int id;
+    private Long id;
 
     private String app;//组件名
 
@@ -13,11 +13,11 @@ public class ReportEntity {
 
     private Long count;//总数
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -61,7 +61,7 @@ public class ReportEntity {
         this.count = count;
     }
 
-    public ReportEntity(int id, String app, String resource, int condition, int method, Long count) {
+    public ReportEntity(Long id, String app, String resource, int condition, int method, Long count) {
         this.id = id;
         this.app = app;
         this.resource = resource;
