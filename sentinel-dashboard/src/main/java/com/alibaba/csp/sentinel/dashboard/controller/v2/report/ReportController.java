@@ -1,5 +1,6 @@
 package com.alibaba.csp.sentinel.dashboard.controller.v2.report;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.report.MailConfig;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.report.ReportEntity;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.other.IncrNacosRule;
@@ -54,23 +55,31 @@ public class ReportController {
     public Result<?> save(@RequestBody ReportEntity entity) throws Exception {
         List<ReportEntity> rules = provider.getRules();
 
-        List<ReportEntity> filteredList = rules.stream()
-                .filter(reportEntity -> !Objects.equals(reportEntity.getId(), entity.getId()))
-                .collect(Collectors.toList());
+        List<ReportEntity> filteredList = rules.stream().filter(reportEntity -> !Objects.equals(reportEntity.getId(), entity.getId())).collect(Collectors.toList());
         filteredList.add(entity);
         publisher.publish(filteredList);
-        return Result.ofSuccess(rules);
+        return Result.ofSuccess(entity);
     }
 
     @DeleteMapping("/delete")
     public Result<?> delete(Long id) throws Exception {
         List<ReportEntity> rules = provider.getRules();
 
-        List<ReportEntity> filteredList = rules.stream()
-                .filter(reportEntity -> !Objects.equals(reportEntity.getId(), id))
-                .collect(Collectors.toList());
+        List<ReportEntity> filteredList = rules.stream().filter(reportEntity -> !Objects.equals(reportEntity.getId(), id)).collect(Collectors.toList());
 
         publisher.publish(filteredList);
         return Result.ofSuccess(id);
+    }
+
+
+    @PutMapping("/config/mail")
+    public Result<?> configMail(@RequestBody MailConfig config) throws Exception {
+        publisher.publish(config);
+        return Result.ofSuccess(config);
+    }
+
+    @GetMapping("/config/mail")
+    public Result<?> getConfigMail() throws Exception {
+        return Result.ofSuccess(provider.getMailCOnfig());
     }
 }

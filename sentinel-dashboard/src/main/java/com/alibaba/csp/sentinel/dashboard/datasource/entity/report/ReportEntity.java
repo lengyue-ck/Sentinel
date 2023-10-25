@@ -22,8 +22,7 @@ public class ReportEntity {
     private String resource;//资源名
 
     private int condition;//条件 1大于 -1:小于
-
-    private int method;//方法 0:总qps 1:响应时间rt 2:successQps 3:exceptionQps 4:blockQps 5:passQps
+    private int method;// 方法 0:总请求次数 1:平均响应时间 2:成功请求数 3:异常请求数 4:拒绝请求数 5:通过请求数
 
     private Long count;//总数
 
