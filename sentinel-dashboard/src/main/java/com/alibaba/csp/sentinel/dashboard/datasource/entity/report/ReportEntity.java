@@ -12,6 +12,8 @@ public class ReportEntity {
 
     public static final int BLOCK_QPS = 4;
 
+    public static final int PASS_QPS = 5;
+
 
     private Long id;
 
@@ -21,7 +23,7 @@ public class ReportEntity {
 
     private int condition;//条件 1大于 -1:小于
 
-    private int method;//方法 0:总qps 1:响应时间rt 2:successQps 3:exceptionQps 4:blockQps
+    private int method;//方法 0:总qps 1:响应时间rt 2:successQps 3:exceptionQps 4:blockQps 5:passQps
 
     private Long count;//总数
 

@@ -15,6 +15,34 @@ public class ReportRuleInvoke {
     @Autowired
     private MetricsRepository<MetricEntity> metricStore;
 
+    //支持模版配置
+
+    /**
+     * ${APP} 组件名称
+     * ${RESOURCE} 资源名称
+     * ${TIME} 时间
+     * ${COUNT} 次数
+     */
+    private void report(List<MetricEntity> entities, ReportEntity reportEntity) {
+        if (entities.isEmpty()) {
+            return;
+        }
+        MetricEntity entity = entities.get(0);
+        String template = "您配置的${RESOURCE}在${TIME}的时候，${METHOD}的${CONDITION}了${COUNT}次，超过了阈值${THRESHOLD}";
+
+        template = template.replace("${THRESHOLD}", String.valueOf(reportEntity.getCount()));
+        template = template.replace("${APP}", entity.getApp());
+        template = template.replace("${RESOURCE}", entity.getResource());
+        template = template.replace("${TIME}", String.valueOf(entity.getTimestamp()));
+        if (template.contains("${COUNT}")) {
+            long sumPassQps = entities.stream().mapToLong(MetricEntity::getPassQps).sum();
+            long sumBlockQps = entities.stream().mapToLong(MetricEntity::getBlockQps).sum();
+            template = template.replace("${COUNT}", String.valueOf(sumPassQps + sumBlockQps));
+        }
+
+        System.out.println(template);
+    }
+
     @Async
     public void asyncInvoke(ReportEntity entity) {
         long endTime = System.currentTimeMillis() - 1000 * 30;//收集信息有延迟
@@ -26,11 +54,45 @@ public class ReportRuleInvoke {
             long sumPassQps = entities.stream().mapToLong(MetricEntity::getPassQps).sum();
             long sumBlockQps = entities.stream().mapToLong(MetricEntity::getBlockQps).sum();
             if (sumPassQps + sumBlockQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
-                System.out.println("满足告警规则sumSuccessQps: " + sumPassQps);
-            }else if (sumPassQps + sumBlockQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
-                System.out.println("满足告警规则sumSuccessQps: " + sumPassQps);
+                report(entities, entity);
+            } else if (sumPassQps + sumBlockQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
+            }
+        } else if (entity.getMethod() == ReportEntity.SUCCESS_QPS) {
+            long sumSuccessQps = entities.stream().mapToLong(MetricEntity::getSuccessQps).sum();
+            if (sumSuccessQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
+                report(entities, entity);
+            } else if (sumSuccessQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
+            }
+        } else if (entity.getMethod() == ReportEntity.EXCEPTION_QPS) {
+            long sumExceptionQps = entities.stream().mapToLong(MetricEntity::getExceptionQps).sum();
+            if (sumExceptionQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
+                report(entities, entity);
+            } else if (sumExceptionQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
+            }
+        } else if (entity.getMethod() == ReportEntity.BLOCK_QPS) {
+            long sumBlockQps = entities.stream().mapToLong(MetricEntity::getBlockQps).sum();
+            if (sumBlockQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
+                report(entities, entity);
+            } else if (sumBlockQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
+            }
+        } else if (entity.getMethod() == ReportEntity.RT) {
+            double sumRt = entities.stream().mapToDouble(MetricEntity::getRt).sum();
+            if (sumRt / entities.size() > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
+                report(entities, entity);
+            } else if (sumRt < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
+            }
+        } else if (entity.getMethod() == ReportEntity.PASS_QPS) {
+            long sumPassQps = entities.stream().mapToLong(MetricEntity::getPassQps).sum();
+            if (sumPassQps > entity.getCount() && entity.getCondition() == ReportEntity.GT) {
+                report(entities, entity);
+            } else if (sumPassQps < entity.getCount() && entity.getCondition() == ReportEntity.LT) {
+                report(entities, entity);
             }
         }
-
     }
 }
