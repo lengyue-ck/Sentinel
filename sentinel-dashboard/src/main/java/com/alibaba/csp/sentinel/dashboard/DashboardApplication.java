@@ -20,6 +20,7 @@ import com.alibaba.csp.sentinel.init.InitExecutor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Sentinel dashboard application.
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @author Carpenter Lee
  */
 @EnableAspectJAutoProxy
+@EnableScheduling
 @SpringBootApplication
 public class DashboardApplication {
 
