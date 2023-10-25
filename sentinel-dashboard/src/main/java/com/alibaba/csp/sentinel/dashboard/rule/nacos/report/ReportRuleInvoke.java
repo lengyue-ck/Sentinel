@@ -4,8 +4,8 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.report.ReportEntity;
 import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+//import org.springframework.mail.SimpleMailMessage;
+//import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +16,8 @@ import java.util.List;
 public class ReportRuleInvoke {
     @Autowired
     private MetricsRepository<MetricEntity> metricStore;
-    @Autowired
-    private JavaMailSenderImpl javaMailSender;
+//    @Autowired
+//    private JavaMailSenderImpl javaMailSender;
 
     //支持模版配置
 
