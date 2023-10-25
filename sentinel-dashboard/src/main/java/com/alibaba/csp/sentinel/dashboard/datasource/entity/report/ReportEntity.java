@@ -61,6 +61,9 @@ public class ReportEntity {
         this.count = count;
     }
 
+    public ReportEntity() {
+    }
+
     public ReportEntity(Long id, String app, String resource, int condition, int method, Long count) {
         this.id = id;
         this.app = app;
