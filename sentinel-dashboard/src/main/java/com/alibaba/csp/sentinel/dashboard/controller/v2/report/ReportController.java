@@ -27,5 +27,6 @@ public class ReportController {
                 .mapToLong(MetricEntity::getPassQps)
                 .sum();
         System.out.println("sumSuccessQps: " + sumSuccessQps);
+        System.out.println("entities: " + entities.size());
     }
 }
