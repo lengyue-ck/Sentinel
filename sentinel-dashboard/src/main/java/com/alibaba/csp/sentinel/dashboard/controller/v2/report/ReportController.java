@@ -23,8 +23,9 @@ public class ReportController {
         String app = "graee68d";
         List<MetricEntity> entities = metricStore.queryByAppAndResourceBetween(app, "/pc-service/api/hello", startTime, endTime);
 
-        for (MetricEntity entity : entities) {
-            System.out.println(JSON.toJSONString(entity));
-        }
+        double sumSuccessQps = entities.stream()
+                .mapToDouble(MetricEntity::getPassQps)
+                .sum();
+        System.out.println("sumSuccessQps: " + sumSuccessQps);
     }
 }
