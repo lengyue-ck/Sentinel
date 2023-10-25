@@ -28,7 +28,7 @@ public class ReportRuleInvoke {
             return;
         }
         MetricEntity entity = entities.get(0);
-        String template = "您配置的${RESOURCE}在${TIME}的时候，${METHOD}的${CONDITION}了${COUNT}次，超过了阈值${THRESHOLD}";
+        String template = reportEntity.getTemplate();
 
         template = template.replace("${THRESHOLD}", String.valueOf(reportEntity.getCount()));
         template = template.replace("${APP}", entity.getApp());

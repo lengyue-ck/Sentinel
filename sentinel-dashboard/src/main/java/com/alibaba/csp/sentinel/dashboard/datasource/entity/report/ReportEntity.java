@@ -27,6 +27,10 @@ public class ReportEntity {
 
     private Long count;//总数
 
+
+
+    private String template;//模版
+
     public Long getId() {
         return id;
     }
@@ -75,15 +79,14 @@ public class ReportEntity {
         this.count = count;
     }
 
-    public ReportEntity() {
+    public String getTemplate() {
+        return template;
     }
 
-    public ReportEntity(Long id, String app, String resource, int condition, int method, Long count) {
-        this.id = id;
-        this.app = app;
-        this.resource = resource;
-        this.condition = condition;
-        this.method = method;
-        this.count = count;
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+
+    public ReportEntity() {
     }
 }
