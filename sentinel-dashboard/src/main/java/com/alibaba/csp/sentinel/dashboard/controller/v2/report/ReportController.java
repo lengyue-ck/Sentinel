@@ -9,12 +9,11 @@ import com.alibaba.csp.sentinel.dashboard.rule.nacos.report.ReportRuleNacosPubli
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/sentinel-service/report", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,10 +39,38 @@ public class ReportController {
     public Result<?> create(@RequestBody ReportEntity entity) throws Exception {
         entity.setId(incrNacosRule.getAndIncrementId());
         List<ReportEntity> rules = provider.getRules();
-
         rules.add(entity);
-
         publisher.publish(rules);
         return Result.ofSuccess(entity);
+    }
+
+    @GetMapping("/rules")
+    public Result<?> rules() throws Exception {
+        List<ReportEntity> rules = provider.getRules();
+        return Result.ofSuccess(rules);
+    }
+
+    @PutMapping("/save")
+    public Result<?> save(@RequestBody ReportEntity entity) throws Exception {
+        List<ReportEntity> rules = provider.getRules();
+
+        List<ReportEntity> filteredList = rules.stream()
+                .filter(reportEntity -> !Objects.equals(reportEntity.getId(), entity.getId()))
+                .collect(Collectors.toList());
+        filteredList.add(entity);
+        publisher.publish(filteredList);
+        return Result.ofSuccess(rules);
+    }
+
+    @DeleteMapping("/delete")
+    public Result<?> delete(Long id) throws Exception {
+        List<ReportEntity> rules = provider.getRules();
+
+        List<ReportEntity> filteredList = rules.stream()
+                .filter(reportEntity -> !Objects.equals(reportEntity.getId(), id))
+                .collect(Collectors.toList());
+
+        publisher.publish(filteredList);
+        return Result.ofSuccess(id);
     }
 }
