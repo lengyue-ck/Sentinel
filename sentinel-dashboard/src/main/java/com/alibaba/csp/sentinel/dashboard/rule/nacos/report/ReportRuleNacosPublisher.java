@@ -21,7 +21,7 @@ public class ReportRuleNacosPublisher {
 
     public void publish(List<ReportEntity> rules) throws Exception {
 
-        configService.publishConfig(NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
+        configService.publishConfig("rbd" + NacosConfigUtil.REPORT_DATA_ID_POSTFIX,
                 NacosConfigUtil.GROUP_ID, converter.convert(rules));
     }
 }
